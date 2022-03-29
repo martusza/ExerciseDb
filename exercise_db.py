@@ -20,4 +20,4 @@ exercise_search = ExerciseDb()
 # exercise_search.export_to_csv("exercises.csv", filtered_data)
 
 # To export all data and save it in batches in csv format
-exercise_search.export_all()
+exercise_search.export_all(batch_size=None)

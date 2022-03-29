@@ -163,7 +163,7 @@ class ExerciseDb:
                     id_all.append(row['id'])
 
         # Saving all data if batch size == all
-        if batch_size == "all":
+        if batch_size == "all" or not batch_size:
             filename = "exercises_all.csv"
             self.export_to_csv(filename, data_all)
             return
