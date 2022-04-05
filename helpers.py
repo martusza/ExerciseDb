@@ -107,12 +107,25 @@ class ExerciseDb:
             json.dump(out, f)
 
     def read_data(self, query_text):
+        """
+        Method to read data from json file and save it in data attribute
+        :param query_text: query string used to get data from api
+        :return: None
+        """
         query_text_file_name = query_text.replace(" ", "_")
         with open(os.path.join(self.file_path, f"exercises_{query_text_file_name}.json")) as f:
             out = json.load(f)
         self.data = out
 
     def get_data(self, query_text):
+        """
+        Method that checks if file with requested data exists and according
+        to the result reads data from file or gets data from api
+        Data is kept in instance attribute data
+        :param query_text: query string - can be equipment name, body part or
+        target muscle
+        :return: None
+        """
         query_text_file_name = query_text.replace(" ", "_")
         path = os.path.join(self.file_path, f"exercises_{query_text_file_name}.json")
         if os.path.isfile(path):
@@ -121,19 +134,28 @@ class ExerciseDb:
             self.read_api(query_text)
 
     def search_exercise(self, **kwargs):
-        matches = []
-        for row in self.data:
-            check = []
-            # selecting filtered values by key vaule pairs
-            for k, v in kwargs.items():
-                if v in row.get(k):
-                    check.append(v)
-            if len(check) == len(kwargs):
-                matches.append(row)
-        print(matches)
+        """
+        Method that allows to narrow down the number of results
+        Can be useful if you want to search for exercise and you dont know
+        exact name or you want to use multiple conditions
+        e.g. target muscle and equipment
+        :param kwargs: dictionary with conditions to use for filtering
+        :return: list of matching exercises
+        """
+        matches = self.data
+        # selecting filtered values by key vaule pairs
+        for k, v in kwargs.items():
+            if v:
+                matches = [exercise for exercise in matches if v in exercise[k]]
         return matches
 
     def export_to_csv(self, filename, data=None):
+        """
+        Method saving data to csv
+        :param filename:
+        :param data:
+        :return:
+        """
         data = data if data else self.data
         path = os.path.join(self.file_path, filename)
         with open(path, "w", newline="") as f:
@@ -143,9 +165,14 @@ class ExerciseDb:
                 writer.writerow(line.values())
 
     def export_all(self, batch_size=50):
+        """
+        Method that gets all exercises present in db and saves them
+        in csv file in batches (50 exercises per file by default)
+        :param batch_size: int
+        :return: None
+        """
         data_all = []
         id_all = []
-        # data_all = ["id", "name_en", "name_pl", "description_en", "description_pl", "gifUrl", "bodyPart", "target"]
         for body_part in AVAILABLE_BODY_PARTS:
             self.get_data(body_part)
             for row in self.data:
