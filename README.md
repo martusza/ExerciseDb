@@ -1,4 +1,4 @@
-# Connectin with db containing over 1000 exercises
+# Connecting with db containing over 1000 exercises
 ExerciseDB class allows connecting with exercisedb API
 to use that code you should have you api key in api_key.json file in the same folder
 
